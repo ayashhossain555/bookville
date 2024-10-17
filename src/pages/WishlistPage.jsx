@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+// src/pages/WishlistPage.jsx
+import { useState, useEffect } from "react";
 import BookCard from "../components/BookCard";
 
 const WishlistPage = () => {
@@ -17,10 +18,15 @@ const WishlistPage = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl mb-4">Wishlist</h1>
+      <h1 className="text-2xl mb-4">Your Wishlist</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {wishlist.map((book) => (
-          <BookCard key={book.id} book={book} toggleWishlist={removeFromWishlist} inWishlist />
+          <BookCard
+            key={book.id}
+            book={book}
+            toggleWishlist={removeFromWishlist}
+            inWishlist
+          />
         ))}
       </div>
     </div>
