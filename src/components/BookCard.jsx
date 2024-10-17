@@ -15,7 +15,7 @@ const BookCard = ({ book, toggleWishlist, inWishlist }) => {
       <img
         src={book.formats["image/jpeg"] || "https://via.placeholder.com/150"}
         alt={book.title}
-        className="w-full h-[510px] object-cover rounded-md mb-2"
+        className="w-full h-[470px] object-cover rounded-md mb-2"
       />
       <div className="">
         <h2 className="text-lg font-bold mt-2">{book.title}</h2>
