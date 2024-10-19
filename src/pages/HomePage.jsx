@@ -1,13 +1,17 @@
+// src/pages/HomePage.jsx
+
 import { useState, useEffect, useCallback } from "react";
 import BookCard from "../components/BookCard";
+import Loader from "../components/Loader";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import { FaSearch, FaHeart, FaSpinner } from "react-icons/fa"; // Added icons
-import { AnimatePresence, motion } from "framer-motion"; // Animations
+import { FaSearch } from "react-icons/fa";
+import { AnimatePresence, motion } from "framer-motion";
+import { fetchBooks, loadWishlist, updateWishlist } from "../services/api";
 
 const HomePage = () => {
   const [books, setBooks] = useState([]);
   const [genres, setGenres] = useState(["All"]);
-  const [wishlist, setWishlist] = useState([]);
+  const [wishlist, setWishlist] = useState(loadWishlist());
   const [search, setSearch] = useState(localStorage.getItem("search") || "");
   const [selectedGenre, setSelectedGenre] = useState(localStorage.getItem("selectedGenre") || "All");
   const [page, setPage] = useState(1);
@@ -15,15 +19,6 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
   const booksPerPage = 32;
-
-  const fetchBooks = async (genre = "", page = 1, search = "") => {
-    const genreFilter = genre && genre !== "All" ? `&topic=${encodeURIComponent(genre)}` : "";
-    const searchQuery = search ? `&search=${search}` : "";
-    const response = await fetch(
-      `https://gutendex.com/books?page=${page}${genreFilter}${searchQuery}`
-    );
-    return await response.json();
-  };
 
   const loadBooks = useCallback(async () => {
     setLoading(true);
@@ -48,18 +43,15 @@ const HomePage = () => {
 
   useEffect(() => {
     loadBooks();
-    const savedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(savedWishlist);
   }, [loadBooks]);
 
   const toggleWishlist = (book) => {
-    const isInWishlist = wishlist.some((b) => b.id === book.id);
-    const updatedWishlist = isInWishlist
+    const updatedWishlist = wishlist.some((b) => b.id === book.id)
       ? wishlist.filter((b) => b.id !== book.id)
       : [...wishlist, book];
 
     setWishlist(updatedWishlist);
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    updateWishlist(updatedWishlist);
   };
 
   const handlePageChange = (newPage) => {
@@ -89,39 +81,48 @@ const HomePage = () => {
   };
 
   return (
-    <div className="p-4">
-      <div className="flex gap-4 mb-4">
+    <div className="mt-20 px-4">
+      <div className="w-full flex flex-col gap-4 justify-center items-center pt-20 pb-14 my-10 lg:my-20 text-center">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-gray-600 font-bold uppercase tracking-wide">
+          Find your favorite books at <br /> <span className="text-blue-500 text-2xl md:text-4xl lg:text-5xl xl:text-6xl">Bookville</span>
+        </h1>
+        <p className="mt-6 text-sm md:text-base lg:text-lg xl:text-xl opacity-80 tracking-wide leading-snug w-full lg:w-2/3">
+          At Bookville we bring you the best collection of books that you love and enjoy reading.
+          Here you can search the books by name or find the books by their genre!
+        </p>
+      </div>
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
         <div className="relative w-full">
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
           <input
             type="text"
             placeholder="Search books..."
-            className="border p-2 pl-10 w-full"
+            className="border p-2 pl-10 w-full rounded-full outline-blue-500"
             value={search}
             onChange={handleSearchChange}
           />
         </div>
-        <select
-          value={selectedGenre}
-          onChange={handleGenreChange}
-          className="border p-2"
-        >
-          {genres.map((genre, index) => (
-            <option key={index} value={genre}>
-              {genre}
-            </option>
-          ))}
-        </select>
+        <div className="w-full md:w-1/3">
+          <select
+            value={selectedGenre}
+            onChange={handleGenreChange}
+            className="border p-2 w-full rounded-full outline-blue-500"
+          >
+            {genres.map((genre, index) => (
+              <option key={index} value={genre}>
+                {genre}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center">
-          <FaSpinner className="animate-spin text-4xl text-blue-500" />
-        </div>
+        <Loader />
       ) : (
         <AnimatePresence>
           <motion.div
-            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -146,32 +147,20 @@ const HomePage = () => {
         </AnimatePresence>
       )}
 
-      <div className="flex justify-center mt-4 space-x-2 items-center">
-        <button
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page === 1}
-          className="px-3 py-2 bg-gray-300 rounded"
-        >
+      <div className="flex justify-center my-10 space-x-2 items-center">
+        <button onClick={() => handlePageChange(page - 1)} disabled={page === 1} className="px-3 py-2 bg-gray-300 rounded">
           <ChevronLeftIcon className="h-5 w-5" />
         </button>
-
         {getPageNumbers().map((p) => (
           <button
             key={p}
             onClick={() => handlePageChange(p)}
-            className={`px-3 py-2 rounded ${
-              p === page ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
+            className={`px-3 py-2 rounded ${p === page ? "bg-blue-500 text-white" : "bg-gray-200"}`}
           >
             {p}
           </button>
         ))}
-
-        <button
-          onClick={() => handlePageChange(page + 1)}
-          disabled={page === totalPages}
-          className="px-3 py-2 bg-gray-300 rounded"
-        >
+        <button onClick={() => handlePageChange(page + 1)} disabled={page === totalPages} className="px-3 py-2 bg-gray-300 rounded">
           <ChevronRightIcon className="h-5 w-5" />
         </button>
       </div>
