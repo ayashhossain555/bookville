@@ -1,5 +1,3 @@
-// src/pages/WishlistPage.jsx
-
 import { useEffect, useState } from "react";
 import BookCard from "../components/BookCard";
 import { loadWishlist, updateWishlist } from "../services/api";

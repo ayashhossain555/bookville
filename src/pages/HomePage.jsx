@@ -1,5 +1,3 @@
-// src/pages/HomePage.jsx
-
 import { useState, useEffect, useCallback } from "react";
 import BookCard from "../components/BookCard";
 import Loader from "../components/Loader";

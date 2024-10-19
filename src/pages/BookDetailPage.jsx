@@ -1,8 +1,6 @@
-// src/pages/BookDetailPage.jsx
-
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion"; // For animations
+import { motion } from "framer-motion";
 import Loader from "../components/Loader";
 import { fetchBooks, loadWishlist, updateWishlist } from "../services/api";
 import { FaHeart, FaRegHeart } from "react-icons/fa";

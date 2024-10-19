@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaHeart, FaRegHeart, FaInfoCircle } from "react-icons/fa"; // Icons
-import { Link } from "react-router-dom"; // For navigation
+import { FaHeart, FaRegHeart, FaInfoCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const BookCard = ({ book, toggleWishlist, inWishlist }) => {
   const [showFullGenres, setShowFullGenres] = useState(false);
