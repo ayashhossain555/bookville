@@ -1,4 +1,4 @@
-import './App.css'
+import './App.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -8,15 +8,17 @@ import BookDetailPage from "./pages/BookDetailPage";
 
 const App = () => (
   <Router>
-    <Navbar />
-    <div className='container'>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/wishlist" element={<WishlistPage />} />
-        <Route path="/book/:id" element={<BookDetailPage />} />
-      </Routes>
+    <div id="root">
+      <Navbar />
+      <div className="container">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/book/:id" element={<BookDetailPage />} />
+        </Routes>
+      </div>
+      <Footer />
     </div>
-    <Footer />
   </Router>
 );
 
